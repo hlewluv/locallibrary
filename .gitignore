@@ -1,0 +1,20 @@
+# Loại trừ môi trường ảo (Rất quan trọng!)
+venv/
+env/
+
+# Loại trừ file database SQLite
+db.sqlite3
+
+# Loại trừ các file cache và file tạm thời
+*.pyc
+__pycache__/
+
+# Loại trừ file media (nếu có)
+/media/
+
+# Loại trừ các file static đã thu thập
+/staticfiles/
+
+# Loại trừ file bí mật cục bộ
+*.env
+.vscode/
