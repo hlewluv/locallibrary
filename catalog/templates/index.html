@@ -11,4 +11,13 @@
     <li><strong>Copies available:</strong> {{ num_instances_available }}</li>
     <li><strong>Authors:</strong> {{ num_authors }}</li>
   </ul>
+  <div class="dynamic-content">
+        <h2>Nội Dung Động</h2>
+
+        <!-- PHẦN ĐẾM SỐ LẦN TRUY CẬP -->
+        <div class="visit-counter">
+            <p>Bạn đã truy cập trang này {{ num_visits }} lần{% if num_visits > 1 %}{% endif %}.</p>
+        </div>
+    </div>
 {% endblock %}
+
