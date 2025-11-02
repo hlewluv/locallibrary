@@ -1,6 +1,9 @@
 from django.db import models
 from django.urls import reverse
 import uuid
+from django.contrib.auth.models import User
+from datetime import date  # ← THÊM DÒNG NÀY
+
 
 # Create your models here.
 class Genre(models.Model):
@@ -44,6 +47,8 @@ class BookInstance(models.Model):
     """
     Model đại diện cho một bản sao cụ thể của sách (tức là có thể được mượn từ thư viện).
     """
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, 
                          help_text='ID duy nhất cho bản sách cụ thể này trong toàn thư viện')
                          
@@ -74,6 +79,7 @@ class BookInstance(models.Model):
     class Meta:
         # Sắp xếp các bản sao theo ngày dự kiến trả lại
         ordering = ['due_back']
+        permissions = (("can_mark_returned", "Set book as returned"),)
 
     def __str__(self):
         """
@@ -81,6 +87,13 @@ class BookInstance(models.Model):
         """
         # Trả về ID của bản sao và tiêu đề của cuốn sách mà nó thuộc về
         return f'{self.id} ({self.book.title})'
+    
+    @property
+    def is_overdue(self):
+        """Kiểm tra xem sách có bị trả trễ không"""
+        if self.due_back and date.today() > self.due_back:
+            return True
+        return False
     
 
 class Author(models.Model):

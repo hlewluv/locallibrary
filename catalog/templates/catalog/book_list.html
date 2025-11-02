@@ -1,0 +1,51 @@
+<!-- catalog/templates/catalog/book_list.html -->
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>📚 Danh Sách Sách</h1>
+
+{% if book_list %}
+    {% for book in book_list %}
+        <div class="book-item">
+            <!-- LINK CHÍNH - Click vào tiêu đề để xem chi tiết -->
+            <div class="book-title">
+                <a href="{% url 'book-detail' book.pk %}">
+                    <strong>{{ book.title }}</strong>
+                </a>
+            </div>
+            
+            <div class="book-author">
+                👤 Tác giả: {{ book.author|default:"Chưa xác định" }}
+            </div>
+            
+            {% if book.summary %}
+                <div class="book-summary">
+                    📝 {{ book.summary|truncatewords:30 }}
+                </div>
+            {% endif %}
+            
+            {% if book.isbn %}
+                <div class="book-isbn">
+                    🔢 ISBN: {{ book.isbn }}
+                </div>
+            {% endif %}
+            
+            <div class="book-genre">
+                🏷️ Thể loại: 
+                {% for genre in book.genre.all %}
+                    {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    Chưa phân loại
+                {% endfor %}
+            </div>
+            
+            <!-- NÚT XEM CHI TIẾT -->
+            <a href="{% url 'book-detail' book.pk %}" class="view-detail">
+                👁️ Xem chi tiết
+            </a>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>📭 Không có sách nào trong thư viện.</p>
+{% endif %}
+{% endblock %}
