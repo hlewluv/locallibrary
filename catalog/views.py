@@ -1,15 +1,35 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.models import Book, Author, BookInstance, Genre
 # Create your views here.
 from django.views import generic
 
-class BookListView(generic.ListView):
+class BookListView(LoginRequiredMixin, generic.ListView):
     model = Book 
     paginate_by = 1
+    login_url = '/accounts/login/'  # Optional: chỉ định URL login
+    redirect_field_name = 'next'    # Optional: tên parameter redirect
     
-class BookDetailView(generic.DetailView):
+class BookDetailView(LoginRequiredMixin, generic.DetailView):
     model = Book
+    login_url = '/accounts/login/'
+    redirect_field_name = 'next'
+    
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+    """View hiển thị danh sách sách mà user hiện tại đang mượn"""
+    model = BookInstance
+    template_name = 'catalog/bookinstance_list_borrowed.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """Lấy danh sách sách mà user hiện tại đang mượn"""
+        return BookInstance.objects.filter(
+            borrower=self.request.user
+        ).filter(
+            status__exact='o'  # 'o' = On loan (đang cho mượn)
+        ).order_by('due_back')
+
 
 def index(request):
     num_books = Book.objects.all().count()
